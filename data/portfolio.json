@@ -1,0 +1,402 @@
+{
+  "personal": {
+    "firstName": "Darshan",
+    "lastName": "Hanwate",
+    "logoText": "Darsh",
+    "role": "Full Stack Developer",
+    "typingStrings": [
+      "frontend development",
+      "backend development",
+      "web designing",
+      "ai application development",
+      "web development"
+    ],
+    "bio": "I am a Full Stack Developer with hands-on experience in the MERN stack and AI application development. Skilled in React.js, Node.js, Express.js, MongoDB, LangChain, LangGraph, RAG, Qdrant, Redis, Docker, and AWS. Experienced in building real-time, AI-powered, and scalable web applications.",
+    "email": "darshanmrh12@gmail.com",
+    "phone": "+91 XXX-XXX-XXXX",
+    "place": "Pune, India - 411016",
+    "resumeUrl": "",
+    "heroImage": "/assets/images/hero.png",
+    "aboutImage": "/assets/images/darshan.jpg",
+    "educationQuote": "Education is not the learning of facts, but the training of the mind to think.",
+    "experienceQuote": "every experience in your life is being orchestrated to teach you something you need to know to move forward.",
+    "footerBio": "Thank you for visiting my personal portfolio website. Connect with me over socials. Keep Rising 🚀. Connect with me over live chat!"
+  },
+  "socials": {
+    "linkedin": "https://www.linkedin.com/in/hanwate-darshan/",
+    "github": "https://github.com/hanwate-darshan",
+    "twitter": "https://twitter.com/",
+    "telegram": "https://t.me/",
+    "instagram": "https://www.instagram.com/",
+    "dev": "https://dev.to/"
+  },
+  "technicalSkills": [
+    {
+      "category": "Frontend",
+      "skills": ["HTML5", "CSS3", "JavaScript", "TypeScript", "React.js", "Next.js", "Tailwind CSS", "Redux Toolkit", "Context API"]
+    },
+    {
+      "category": "Backend",
+      "skills": ["Node.js", "Express.js", "REST APIs", "Microservices Architecture", "BullMQ (Job Queue)", "Socket.io", "Mongoose"]
+    },
+    {
+      "category": "Databases & Caching",
+      "skills": ["MongoDB", "MongoDB Atlas", "PostgreSQL", "MySQL", "Redis", "Qdrant", "Vector DB"]
+    },
+    {
+      "category": "AI Development",
+      "skills": ["LLM API Integration", "LangChain", "LangGraph", "RAG (Retrieval-Augmented Generation)", "Vector DB (Qdrant)", "Multi-Agent AI", "AI Tool Calling"]
+    },
+    {
+      "category": "DevOps & Cloud",
+      "skills": ["Docker", "Docker Compose", "CI/CD Pipelines", "AWS CLI", "AWS EC2", "AWS S3", "AWS CloudFront", "Vercel", "Render"]
+    },
+    {
+      "category": "Authentication & Security",
+      "skills": ["JWT", "bcrypt", "Firebase Authentication", "Google OAuth", "Helmet", "Rate Limiting"]
+    },
+    {
+      "category": "Payment Integration",
+      "skills": ["Razorpay", "Stripe"]
+    },
+    {
+      "category": "Tools",
+      "skills": ["Git", "GitHub", "Postman", "MongoDB Compass", "AWS CLI"]
+    },
+    {
+      "category": "Programming Languages",
+      "skills": ["C++", "Java", "SQL", "JavaScript", "TypeScript"]
+    },
+    {
+      "category": "System Design & Core Concepts",
+      "skills": ["System Design (HLD & LLD)", "Microservices Architecture", "Data Structures & Algorithms (DSA)", "Object-Oriented Programming (OOP)", "DBMS", "Operating Systems", "Computer Networks"]
+    }
+  ],
+  "skills": [
+    {
+      "name": "ReactJS",
+      "icon": "https://img.icons8.com/external-tal-revivo-color-tal-revivo/48/000000/external-react-a-javascript-library-for-building-user-interfaces-logo-color-tal-revivo.png"
+    },
+    {
+      "name": "ExpressJS",
+      "icon": "https://img.icons8.com/fluency/48/000000/node-js.png"
+    },
+    {
+      "name": "NodeJS",
+      "icon": "https://img.icons8.com/color/48/000000/nodejs.png"
+    },
+    {
+      "name": "Redux",
+      "icon": "https://img.icons8.com/color/48/000000/redux.png"
+    },
+    {
+      "name": "Firebase",
+      "icon": "https://img.icons8.com/color/48/000000/firebase.png"
+    },
+    {
+      "name": "Android",
+      "icon": "https://img.icons8.com/fluency/48/000000/android-os.png"
+    },
+    {
+      "name": "MaterialUI",
+      "icon": "https://img.icons8.com/color/48/000000/material-ui.png"
+    },
+    {
+      "name": "ChakraUI",
+      "icon": "https://img.icons8.com/color/48/000000/chakra-ui.png"
+    },
+    {
+      "name": "TailwindCSS",
+      "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/48px-Tailwind_CSS_Logo.png"
+    },
+    {
+      "name": "Bootstrap",
+      "icon": "https://img.icons8.com/color/48/000000/bootstrap.png"
+    },
+    {
+      "name": "Sass",
+      "icon": "https://img.icons8.com/color/48/000000/sass.png"
+    },
+    {
+      "name": "HTML5",
+      "icon": "https://img.icons8.com/color/48/000000/html-5--v1.png"
+    },
+    {
+      "name": "CSS3",
+      "icon": "https://img.icons8.com/color/48/000000/css3.png"
+    },
+    {
+      "name": "JavaScript",
+      "icon": "https://img.icons8.com/color/48/000000/javascript--v1.png"
+    },
+    {
+      "name": "Java",
+      "icon": "https://img.icons8.com/color/48/000000/java-coffee-cup-logo--v1.png"
+    },
+    {
+      "name": "Kotlin",
+      "icon": "https://img.icons8.com/color/48/000000/kotlin.png"
+    },
+    {
+      "name": "PHP",
+      "icon": "https://img.icons8.com/offices/48/000000/php-logo.png"
+    },
+    {
+      "name": "Python",
+      "icon": "https://img.icons8.com/color/48/000000/python--v1.png"
+    },
+    {
+      "name": "C++",
+      "icon": "https://img.icons8.com/color/48/000000/c-plus-plus-logo.png"
+    },
+    {
+      "name": "MongoDB",
+      "icon": "https://img.icons8.com/color/48/000000/mongodb.png"
+    },
+    {
+      "name": "MySQL",
+      "icon": "https://img.icons8.com/color/48/000000/mysql-logo.png"
+    },
+    {
+      "name": "PostgreSQL",
+      "icon": "https://img.icons8.com/color/48/000000/postgreesql.png"
+    },
+    {
+      "name": "AWS",
+      "icon": "https://img.icons8.com/color/48/000000/amazon-web-services.png"
+    },
+    {
+      "name": "Heroku",
+      "icon": "https://img.icons8.com/color/48/000000/heroku.png"
+    },
+    {
+      "name": "Netlify",
+      "icon": "https://img.icons8.com/external-tal-revivo-shadow-tal-revivo/48/000000/external-netlify-a-cloud-computing-company-that-offers-hosting-and-serverless-backend-services-for-static-websites-logo-shadow-tal-revivo.png"
+    },
+    {
+      "name": "DigitalOcean",
+      "icon": "https://img.icons8.com/ios-filled/48/0080FF/digitalocean.png"
+    },
+    {
+      "name": "jQuery",
+      "icon": "https://img.icons8.com/ios-filled/48/1169ae/jquery.png"
+    },
+    {
+      "name": "Git VCS",
+      "icon": "https://img.icons8.com/color/48/000000/git.png"
+    },
+    {
+      "name": "GitHub",
+      "icon": "https://img.icons8.com/glyph-neue/48/ffffff/github.png"
+    },
+    {
+      "name": "WordPress",
+      "icon": "https://img.icons8.com/color/48/000000/wordpress.png"
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-1",
+      "company": "Self Employed",
+      "role": "Full Stack Developer",
+      "duration": "Sep 2026 - present"
+    },
+    {
+      "id": "exp-2",
+      "company": "CodTech IT Solution",
+      "role": "Frontend Developer | Internship",
+      "duration": "Dec 2024 - Jan 2025"
+    }
+  
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "name": "Smart Campus Hub",
+      "desc": "Smart Campus Hub simplifies campus life with emergency alerts, roommate finding, and complaint management..",
+      "image": "/assets/images/projects/smart_hub.png",
+      "category": "fullstack",
+      "links": {
+        "view": "https://smart-campus-hub-xi.vercel.app/",
+        "code": "https://github.com/hanwate-darshan/Smart_Campus_Hub"
+      }
+    },
+    {
+      "id": "proj-2",
+      "name": "Darsh AI",
+      "desc": "DarshAI is a full-stack, multi-agent AI platform that combines AI chat, coding, web search, PDF processing, and data analysis in one workspace.",
+      "image": "/assets/images/projects/darsh_ai.png",
+      "category": "ai",
+      "links": {
+        "view": "https://d3nogwl10bjf7o.cloudfront.net",
+        "code": "https://github.com/hanwate-darshan/DarshAI"
+      }
+    },
+    {
+      "id": "proj-3",
+      "name": "Fresher AI",
+      "desc": "FresherAI is an intelligent career growth platform built for freshers and early-career professionals.",
+      "image": "/assets/images/projects/fresher_ai.png",
+      "category": "ai",
+      "links": {
+        "view": "https://d3dg9qzrffokbc.cloudfront.net",
+        "code": "https://github.com/hanwate-darshan/Fresher_AI"
+      }
+    },
+    {
+      "id": "proj-4",
+      "name": "Wheelo",
+      "desc": "Wheelo is a full-stack, real-time vehicle booking application that connects riders with drivers, offering ride booking, live tracking, secure payments, and driver verification.",
+      "image": "/assets/images/projects/wheelo.png",
+      "category": "fullstack",
+      "links": {
+        "view": "https://github.com/hanwate-darshan/wheelo",
+        "code": "https://github.com/hanwate-darshan/Wheelo_"
+      }
+    },
+    {
+      "id": "proj-5",
+      "name": "Hungry",
+      "desc": "Hungry is a full-stack AI-powered food delivery platform that connects customers, restaurants, and delivery riders with real-time order tracking, secure payments, and smart delivery management.",
+      "image": "/assets/images/projects/h3.png",
+      "category": "mern",
+      "links": {
+        "view": "https://hungry-food-delivery.onrender.com",
+        "code": "https://github.com/hanwate-darshan/Advanced_Projects/tree/main/Hungry"
+      }
+    },
+    {
+      "id": "proj-6",
+      "name": "Ai Exam Notes Generator",
+      "desc": "AI Exam Notes Generator is an AI-powered platform that converts study materials and PDFs into concise, structured, and easy-to-understand exam notes.",
+      "image": "/assets/images/projects/notes1.png",
+      "category": "ai",
+      "links": {
+        "view": "https://darshai-exam-notes-generator.onrender.com/auth",
+        "code": "https://github.com/hanwate-darshan/Exam_Notes_Generator"
+      }
+    },
+    {
+      "id": "proj-7",
+      "name": "Airbnb Clone",
+      "desc": "Airbnb Clone is a full-stack accommodation booking platform that allows users to explore properties, view details, and book stays online.",
+      "image": "/assets/images/projects/air.png",
+      "category": "mern",
+      "links": {
+        "view": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/2.Airbnb_Clone",
+        "code": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/2.Airbnb_Clone"
+      }
+    },
+    {
+      "id": "proj-8",
+      "name": "Jarvis",
+      "desc": "Jarvis is an intelligent AI assistant built with modern web technologies, designed to streamline daily tasks and boost productivity through AI-powered automation.",
+      "image": "/assets/images/projects/jarvis.png",
+      "category": "mern",
+      "links": {
+        "view": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/4.Ai_Virtual_Assistant",
+        "code": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/4.Ai_Virtual_Assistant"
+      }
+    },
+    {
+      "id": "proj-9",
+      "name": "Linkedin Clone",
+      "desc": "LinkedIn Clone is a full-stack professional networking platform that allows users to create profiles, connect with professionals, and share posts.",
+      "image": "/assets/images/projects/link.png",
+      "category": "mern",
+      "links": {
+        "view": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/1.LinkedIn_Project",
+        "code": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/1.LinkedIn_Project"
+      }
+    },
+    {
+      "id": "proj-10",
+      "name": "OneCart",
+      "desc": "OneCart is a full-stack e-commerce platform that allows users to browse products, manage shopping carts, and place orders online.",
+      "image": "/assets/images/projects/onecart.png",
+      "category": "mern",
+      "links": {
+        "view": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/5.E-commerce_Website",
+        "code": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/5.E-commerce_Website"
+      }
+    },
+    {
+      "id": "proj-11",
+      "name": "Chatting Application",
+      "desc": "Chat Application is a real-time messaging platform that allows users to communicate instantly through private and group conversations.",
+      "image": "/assets/images/projects/webchat.png",
+      "category": "mern",
+      "links": {
+        "view": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/3.Chat_Application",
+        "code": "https://github.com/hanwate-darshan/Web_Developement_Projects/tree/main/MERN_STACK_PROJECTS/3.Chat_Application"
+      }
+    },
+    {
+      "id": "proj-12",
+      "name": "PHP Banking Website",
+      "desc": "Basic Banking System based on PHP and MySQL database. Made with HTML, CSS, JavaScript and backend with PHP.",
+      "image": "/assets/images/projects/tsfbank.png",
+      "category": "webdev",
+      "links": {
+        "view": "https://github.com/hanwate-darshan",
+        "code": "https://github.com/hanwate-darshan"
+      }
+    },
+    {
+      "id": "proj-13",
+      "name": "WebChat Website",
+      "desc": "It's a web based chat app made using popular javaScript library Socket IO. Allows multiple users to connect.",
+      "image": "/assets/images/projects/issuetrack.png",
+      "category": "webdev",
+      "links": {
+        "view": "https://github.com/hanwate-darshan",
+        "code": "https://github.com/hanwate-darshan"
+      }
+    },
+    {
+      "id": "proj-14",
+      "name": "JavaScript Issue Tracker",
+      "desc": "It provides the feature to Assign Issue With The Auto Generated Id By Using ChanceJS. Uses Local Storage.",
+      "image": "/assets/images/projects/issuetrack.png",
+      "category": "webdev",
+      "links": {
+        "view": "https://github.com/hanwate-darshan",
+        "code": "https://github.com/hanwate-darshan"
+      }
+    },
+    {
+      "id": "proj-15",
+      "name": "PHP PBL Portal",
+      "desc": "A simple portal in which students can submit their PBL projects and faculties can view by access admin panel.",
+      "image": "/assets/images/projects/phppblform.png",
+      "category": "webdev",
+      "links": {
+        "view": "https://github.com/hanwate-darshan",
+        "code": "https://github.com/hanwate-darshan"
+      }
+    },
+    {
+      "id": "proj-16",
+      "name": "Link List",
+      "desc": "All major profile links in a single website. It's just like clone of link tree. Personalized and Responsive.",
+      "image": "/assets/images/projects/linklist.png",
+      "category": "webdev",
+      "links": {
+        "view": "https://github.com/hanwate-darshan",
+        "code": "https://github.com/hanwate-darshan"
+      }
+    },
+    {
+      "id": "proj-17",
+      "name": "Job Finder Dummy",
+      "desc": "It Fetch JSON Data And Allow Feature To Search Within The Content Displayed. Will be Developed By Using Live APIs.",
+      "image": "/assets/images/projects/saas.png",
+      "category": "webdev",
+      "links": {
+        "view": "https://github.com/hanwate-darshan",
+        "code": "https://github.com/hanwate-darshan"
+      }
+    }
+  ]
+}
+
