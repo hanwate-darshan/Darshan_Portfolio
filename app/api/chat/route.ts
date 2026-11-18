@@ -4,15 +4,16 @@ import { join } from 'path'
 import portfolioData from '@/data/portfolio.json'
 import { extraAiContext } from '@/data/ai-context'
 
+export const maxDuration = 30
+
 function buildSystemPrompt(): string {
-  // Use bundled extraAiContext with filesystem fallback
   let extraContext = extraAiContext || ''
   if (!extraContext) {
     try {
       const contextPath = join(process.cwd(), 'data', 'ai-context.md')
       extraContext = readFileSync(contextPath, 'utf-8')
     } catch {
-      // file not found — skip
+      // skip
     }
   }
 
@@ -32,7 +33,7 @@ function buildSystemPrompt(): string {
   return `You are Darshan Hanwate's AI Assistant embedded in his personal portfolio website.
 Your role is to represent Darshan professionally, accurately, and impressively to visitors, recruiters, and clients.
 
-CRITICAL FORMATTING RULES (CHATGPT STYLE):
+CRITICAL FORMATTING RULES:
 1. ALWAYS structure your responses with clean Markdown:
    - Use bold category headings (e.g., **Frontend:**, **Backend:**, **AI & Machine Learning:**).
    - Use emojis where appropriate (e.g., 🚀, 💻, ⚙️, 🤖, 📦, 🎓).
@@ -49,7 +50,6 @@ CRITICAL FORMATTING RULES (CHATGPT STYLE):
    - Never invent or fabricate information not in the data below.
 
 === PORTFOLIO DATA ===
-
 NAME: ${p.firstName} ${p.lastName}
 ROLE: ${p.role}
 EMAIL: ${p.email}
@@ -72,91 +72,13 @@ ${projects}
 SOCIAL LINKS:
 - LinkedIn: ${portfolioData.socials.linkedin}
 - GitHub: ${portfolioData.socials.github}
-- Twitter: ${portfolioData.socials.twitter}
-- Dev.to: ${portfolioData.socials.dev}
 
-=== COMPREHENSIVE AI CONTEXT (from ai-context.md) ===
+=== COMPREHENSIVE AI CONTEXT ===
 ${extraContext}
 `
 }
 
-// ---------- Gemini API call ----------
-async function callGemini(
-  systemPrompt: string,
-  contents: { role: string; parts: { text: string }[] }[],
-  apiKey: string
-): Promise<string> {
-  const body = {
-    system_instruction: { parts: [{ text: systemPrompt }] },
-    contents,
-    generationConfig: {
-      maxOutputTokens: 1500,
-      temperature: 0.7,
-    },
-  }
-
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    }
-  )
-
-  if (!res.ok) {
-    const err = await res.text()
-    throw new Error(`Gemini API error (${res.status}): ${err}`)
-  }
-
-  const data = await res.json()
-  const parts = data?.candidates?.[0]?.content?.parts || []
-  const textPart =
-    parts.find((p: { text?: string; thought?: boolean }) => p.text && !p.thought) ||
-    parts.find((p: { text?: string }) => p.text)
-  return textPart?.text ?? ''
-}
-
-// ---------- Groq API call (fallback) ----------
-async function callGroq(
-  systemPrompt: string,
-  messages: { role: string; content: string }[],
-  apiKey: string
-): Promise<string> {
-  const groqMessages = [
-    { role: 'system', content: systemPrompt },
-    ...messages
-      .filter((_: unknown, i: number) => i > 0) // skip initial assistant greeting
-      .map((m: { role: string; content: string }) => ({
-        role: m.role === 'user' ? 'user' : 'assistant',
-        content: m.content,
-      })),
-  ]
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: groqMessages,
-      max_tokens: 1500,
-      temperature: 0.7,
-    }),
-  })
-
-  if (!res.ok) {
-    const err = await res.text()
-    throw new Error(`Groq API error (${res.status}): ${err}`)
-  }
-
-  const data = await res.json()
-  return data?.choices?.[0]?.message?.content ?? ''
-}
-
-// ---------- Helper: read env key ----------
+// Helper to get environment variable with fallback to .env.local
 function getEnvKey(name: string): string | undefined {
   let key = process.env[name]
   if (!key) {
@@ -172,13 +94,106 @@ function getEnvKey(name: string): string | undefined {
   return key
 }
 
-export async function POST(req: NextRequest) {
-  const geminiKey = getEnvKey('GEMINI_API_KEY')
-  const groqKey = getEnvKey('GROQ_API_KEY')
+// ---------- Groq API call (Ultra fast: ~0.5s) ----------
+async function callGroq(
+  systemPrompt: string,
+  messages: { role: string; content: string }[],
+  apiKey: string,
+  modelName: string
+): Promise<string> {
+  const groqMessages = [
+    { role: 'system', content: systemPrompt },
+    ...messages
+      .filter((_: unknown, i: number) => i > 0)
+      .map((m: { role: string; content: string }) => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.content,
+      })),
+  ]
 
-  if (!geminiKey && !groqKey) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 8000) // 8s timeout
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: modelName,
+        messages: groqMessages,
+        max_tokens: 1200,
+        temperature: 0.6,
+      }),
+      signal: controller.signal,
+    })
+
+    if (!res.ok) {
+      const err = await res.text()
+      throw new Error(`Groq ${modelName} error (${res.status}): ${err}`)
+    }
+
+    const data = await res.json()
+    return data?.choices?.[0]?.message?.content ?? ''
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
+// ---------- Gemini API call (Fallback) ----------
+async function callGemini(
+  systemPrompt: string,
+  contents: { role: string; parts: { text: string }[] }[],
+  apiKey: string
+): Promise<string> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 12000) // 12s timeout
+
+  try {
+    const body = {
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents,
+      generationConfig: {
+        maxOutputTokens: 1200,
+        temperature: 0.7,
+      },
+    }
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      }
+    )
+
+    if (!res.ok) {
+      const err = await res.text()
+      throw new Error(`Gemini error (${res.status}): ${err}`)
+    }
+
+    const data = await res.json()
+    const parts = data?.candidates?.[0]?.content?.parts || []
+    const textPart =
+      parts.find((p: { text?: string; thought?: boolean }) => p.text && !p.thought) ||
+      parts.find((p: { text?: string }) => p.text)
+    return textPart?.text ?? ''
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const groqKey = getEnvKey('GROQ_API_KEY')
+  const geminiKey = getEnvKey('GEMINI_API_KEY')
+
+  if (!groqKey && !geminiKey) {
     return NextResponse.json(
-      { error: 'No AI API key configured. Please add GEMINI_API_KEY or GROQ_API_KEY in environment variables.' },
+      { error: 'No AI API key configured. Please add GROQ_API_KEY or GEMINI_API_KEY in environment variables.' },
       { status: 500 }
     )
   }
@@ -190,46 +205,50 @@ export async function POST(req: NextRequest) {
 
   const systemPrompt = buildSystemPrompt()
 
-  // Build Gemini-compatible contents (skip initial assistant greeting)
-  const geminiContents = messages
-    .filter((_: unknown, i: number) => i > 0)
-    .map((m: { role: string; content: string }) => ({
-      role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.content }],
-    }))
+  // 1. Try Groq (Primary - response takes ~500ms!)
+  if (groqKey) {
+    // Try openai/gpt-oss-120b first
+    try {
+      const reply = await callGroq(systemPrompt, messages, groqKey, 'openai/gpt-oss-120b')
+      if (reply) {
+        return NextResponse.json({ reply, provider: 'groq-120b' })
+      }
+    } catch (err) {
+      console.warn('Groq 120b failed, trying Groq 20b...', err)
+    }
 
-  // --- Try Gemini first ---
+    // Try openai/gpt-oss-20b
+    try {
+      const reply = await callGroq(systemPrompt, messages, groqKey, 'openai/gpt-oss-20b')
+      if (reply) {
+        return NextResponse.json({ reply, provider: 'groq-20b' })
+      }
+    } catch (err) {
+      console.warn('Groq 20b failed, falling back to Gemini...', err)
+    }
+  }
+
+  // 2. Fallback to Gemini
   if (geminiKey) {
     try {
+      const geminiContents = messages
+        .filter((_: unknown, i: number) => i > 0)
+        .map((m: { role: string; content: string }) => ({
+          role: m.role === 'user' ? 'user' : 'model',
+          parts: [{ text: m.content }],
+        }))
+
       const reply = await callGemini(systemPrompt, geminiContents, geminiKey)
       if (reply) {
         return NextResponse.json({ reply, provider: 'gemini' })
       }
-      throw new Error('Empty response from Gemini')
     } catch (err) {
-      console.error('Gemini failed, trying Groq fallback...', err instanceof Error ? err.message : err)
-    }
-  }
-
-  // --- Fallback to Groq ---
-  if (groqKey) {
-    try {
-      const reply = await callGroq(systemPrompt, messages, groqKey)
-      if (reply) {
-        return NextResponse.json({ reply, provider: 'groq' })
-      }
-      throw new Error('Empty response from Groq')
-    } catch (err) {
-      console.error('Groq also failed:', err instanceof Error ? err.message : err)
-      return NextResponse.json(
-        { error: 'Both AI providers failed. Please try again later.' },
-        { status: 500 }
-      )
+      console.error('Gemini fallback also failed:', err)
     }
   }
 
   return NextResponse.json(
-    { error: 'AI service temporarily unavailable. Please try again later.' },
+    { error: 'Both AI providers failed. Please check your keys or try again.' },
     { status: 500 }
   )
 }
