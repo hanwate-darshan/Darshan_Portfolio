@@ -80,24 +80,105 @@ ${extraContext}
 `
 }
 
-export async function POST(req: NextRequest) {
-  let apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
+// ---------- Gemini API call ----------
+async function callGemini(
+  systemPrompt: string,
+  contents: { role: string; parts: { text: string }[] }[],
+  apiKey: string
+): Promise<string> {
+  const body = {
+    system_instruction: { parts: [{ text: systemPrompt }] },
+    contents,
+    generationConfig: {
+      maxOutputTokens: 1500,
+      temperature: 0.7,
+    },
+  }
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }
+  )
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Gemini API error (${res.status}): ${err}`)
+  }
+
+  const data = await res.json()
+  const parts = data?.candidates?.[0]?.content?.parts || []
+  const textPart =
+    parts.find((p: { text?: string; thought?: boolean }) => p.text && !p.thought) ||
+    parts.find((p: { text?: string }) => p.text)
+  return textPart?.text ?? ''
+}
+
+// ---------- Groq API call (fallback) ----------
+async function callGroq(
+  systemPrompt: string,
+  messages: { role: string; content: string }[],
+  apiKey: string
+): Promise<string> {
+  const groqMessages = [
+    { role: 'system', content: systemPrompt },
+    ...messages
+      .filter((_: unknown, i: number) => i > 0) // skip initial assistant greeting
+      .map((m: { role: string; content: string }) => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.content,
+      })),
+  ]
+
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: groqMessages,
+      max_tokens: 1500,
+      temperature: 0.7,
+    }),
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Groq API error (${res.status}): ${err}`)
+  }
+
+  const data = await res.json()
+  return data?.choices?.[0]?.message?.content ?? ''
+}
+
+// ---------- Helper: read env key ----------
+function getEnvKey(name: string): string | undefined {
+  let key = process.env[name]
+  if (!key) {
     try {
       const envPath = join(process.cwd(), '.env.local')
       const envContent = readFileSync(envPath, 'utf-8')
-      const match = envContent.match(/GEMINI_API_KEY\s*=\s*(.*)/)
-      if (match && match[1]) {
-        apiKey = match[1].trim()
-      }
+      const match = envContent.match(new RegExp(`${name}\\s*=\\s*(.*)`))
+      if (match?.[1]) key = match[1].trim()
     } catch {
       // ignore
     }
   }
+  return key
+}
 
-  if (!apiKey) {
+export async function POST(req: NextRequest) {
+  const geminiKey = getEnvKey('GEMINI_API_KEY')
+  const groqKey = getEnvKey('GROQ_API_KEY')
+
+  if (!geminiKey && !groqKey) {
     return NextResponse.json(
-      { error: 'GEMINI_API_KEY is not configured. Please add GEMINI_API_KEY in Vercel Settings -> Environment Variables, then Redeploy.' },
+      { error: 'No AI API key configured. Please add GEMINI_API_KEY or GROQ_API_KEY in environment variables.' },
       { status: 500 }
     )
   }
@@ -109,42 +190,46 @@ export async function POST(req: NextRequest) {
 
   const systemPrompt = buildSystemPrompt()
 
-  // Build Gemini-compatible contents array (skip the initial assistant greeting)
-  const contents = messages
-    .filter((_: unknown, i: number) => i > 0) // skip the initial assistant greeting
+  // Build Gemini-compatible contents (skip initial assistant greeting)
+  const geminiContents = messages
+    .filter((_: unknown, i: number) => i > 0)
     .map((m: { role: string; content: string }) => ({
       role: m.role === 'user' ? 'user' : 'model',
       parts: [{ text: m.content }],
     }))
 
-  const body = {
-    system_instruction: { parts: [{ text: systemPrompt }] },
-    contents,
-    generationConfig: {
-      maxOutputTokens: 1500,
-      temperature: 0.7,
-    },
-  }
-
-  const geminiRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+  // --- Try Gemini first ---
+  if (geminiKey) {
+    try {
+      const reply = await callGemini(systemPrompt, geminiContents, geminiKey)
+      if (reply) {
+        return NextResponse.json({ reply, provider: 'gemini' })
+      }
+      throw new Error('Empty response from Gemini')
+    } catch (err) {
+      console.error('Gemini failed, trying Groq fallback...', err instanceof Error ? err.message : err)
     }
-  )
-
-  if (!geminiRes.ok) {
-    const err = await geminiRes.text()
-    console.error('Gemini API error:', err)
-    return NextResponse.json({ error: `Gemini API returned error: ${err}` }, { status: 500 })
   }
 
-  const data = await geminiRes.json()
-  const parts = data?.candidates?.[0]?.content?.parts || []
-  const textPart = parts.find((p: { text?: string; thought?: boolean }) => p.text && !p.thought) || parts.find((p: { text?: string }) => p.text)
-  const reply = textPart?.text ?? "Sorry, I couldn't generate a response."
+  // --- Fallback to Groq ---
+  if (groqKey) {
+    try {
+      const reply = await callGroq(systemPrompt, messages, groqKey)
+      if (reply) {
+        return NextResponse.json({ reply, provider: 'groq' })
+      }
+      throw new Error('Empty response from Groq')
+    } catch (err) {
+      console.error('Groq also failed:', err instanceof Error ? err.message : err)
+      return NextResponse.json(
+        { error: 'Both AI providers failed. Please try again later.' },
+        { status: 500 }
+      )
+    }
+  }
 
-  return NextResponse.json({ reply })
+  return NextResponse.json(
+    { error: 'AI service temporarily unavailable. Please try again later.' },
+    { status: 500 }
+  )
 }
