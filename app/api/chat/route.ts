@@ -2,15 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import portfolioData from '@/data/portfolio.json'
+import { extraAiContext } from '@/data/ai-context'
 
 function buildSystemPrompt(): string {
-  // Load extra context from ai-context.md if it exists
-  let extraContext = ''
-  try {
-    const contextPath = join(process.cwd(), 'data', 'ai-context.md')
-    extraContext = readFileSync(contextPath, 'utf-8')
-  } catch {
-    // file not found — skip
+  // Use bundled extraAiContext with filesystem fallback
+  let extraContext = extraAiContext || ''
+  if (!extraContext) {
+    try {
+      const contextPath = join(process.cwd(), 'data', 'ai-context.md')
+      extraContext = readFileSync(contextPath, 'utf-8')
+    } catch {
+      // file not found — skip
+    }
   }
 
   const p = portfolioData.personal
@@ -93,7 +96,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (!apiKey) {
-    return NextResponse.json({ error: 'GEMINI_API_KEY not configured in .env.local' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'GEMINI_API_KEY is not configured. Please add GEMINI_API_KEY in Vercel Settings -> Environment Variables, then Redeploy.' },
+      { status: 500 }
+    )
   }
 
   const { messages } = await req.json()
@@ -132,7 +138,7 @@ export async function POST(req: NextRequest) {
   if (!geminiRes.ok) {
     const err = await geminiRes.text()
     console.error('Gemini API error:', err)
-    return NextResponse.json({ error: 'Gemini API error' }, { status: 500 })
+    return NextResponse.json({ error: `Gemini API returned error: ${err}` }, { status: 500 })
   }
 
   const data = await geminiRes.json()

@@ -139,14 +139,18 @@ export function AiChatButton() {
         body: JSON.stringify({ messages: updatedMessages }),
       })
 
-      if (!res.ok) throw new Error('API error')
+      const data = await res.json().catch(() => ({}))
 
-      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || `Server returned ${res.status}`)
+      }
+
       setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }])
-    } catch {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Please check your connection and try again!'
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Sorry, something went wrong. Please check your connection and try again!' },
+        { role: 'assistant', content: `⚠️ **Notice:** ${errorMessage}` },
       ])
     } finally {
       setLoading(false)
