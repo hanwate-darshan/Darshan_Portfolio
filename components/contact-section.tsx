@@ -27,7 +27,7 @@ export function ContactSection() {
           Accept: 'application/json',
         },
         body: JSON.stringify({
-          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY || 'b7574fee-69ac-469b-88fe-4745a7bc2271',
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '0d24ea09-a1e6-43fc-a491-895248a6f523',
           name: formState.name,
           email: formState.email,
           phone: formState.phone || 'Not provided',
